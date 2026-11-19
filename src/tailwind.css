@@ -1,0 +1,273 @@
+/*
+ * Tailwind without Preflight: the landing page already ships its own base styles
+ * (styles.css), so only the theme and utility layers are pulled in. Declaring the
+ * layer order here lets styles.css put its element defaults in `base`, below utilities.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/*
+ * Carved-teak texture: SVG turbulence stretched along the grain gives real-looking wood
+ * figure without an image download. Used by cabinets and room panelling.
+ */
+@utility bg-teak {
+  background-color: #4a2410;
+  background-image:
+    linear-gradient(180deg, #ffffff0d, transparent 30%, #0000002e),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.32' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0.16 0 0 0 0 0.07 0 0 0 0 0.02 0 0 0 0.85 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, #5a2e14, #4a2410 40%, #55290f 70%, #3e1e0c);
+}
+
+/*
+ * Aged parchment: paper fibres (turbulence), a warm sepia wash that darkens towards
+ * singed edges, and the faint tide-marks of age.
+ */
+@utility bg-parchment-letter {
+  background-color: #f1e2bf;
+  background-image:
+    radial-gradient(ellipse at 50% 45%, transparent 55%, #8a5a2a55 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8 0.12' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.3 0 0 0 0 0.12 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
+    radial-gradient(circle at 18% 22%, #c99a5a1f 0 9%, transparent 10%),
+    radial-gradient(circle at 82% 70%, #b07a3a1a 0 7%, transparent 8%),
+    linear-gradient(180deg, #f7ecd0, #ecd9ad 60%, #e2c890);
+}
+
+/*
+ * Torn top and bottom edges for an unrolled scroll: a ragged strip masks each edge and a
+ * solid band keeps the middle. The rollers cover the left and right edges.
+ */
+@utility mask-torn-edges {
+  mask-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='12'%3E%3Cpath d='M0 12V5l6-2 5 3 6-4 5 3 7-4 5 3 6-1 6 4 6-5 6 3 5-2 7 3 6-4 6 2 6-3 6 4 6-2 6 3 7-4 7 3v7z'/%3E%3C/svg%3E"),
+    linear-gradient(#000, #000),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='12'%3E%3Cpath d='M0 0v7l6 2 5-3 6 4 5-3 7 4 5-3 6 1 6-4 6 5 6-3 5 2 7-3 6 4 6-2 6 3 6-4 6 2 6-3 7 4 7-3V0z'/%3E%3C/svg%3E");
+  mask-size: 120px 12px, 100% calc(100% - 22px), 120px 12px;
+  mask-position: top left, center, bottom left;
+  mask-repeat: repeat-x, no-repeat, repeat-x;
+}
+
+/*
+ * A dried palm leaf (olai): fine lengthwise fibres, a straw-gold body that browns towards
+ * its long edges, and darker ends.
+ */
+@utility bg-palm-leaf {
+  background-color: #ecd29a;
+  background-image:
+    repeating-linear-gradient(180deg, #8a5a2a14 0 1px, transparent 1px 5px),
+    linear-gradient(90deg, #a8783a66, transparent 9%, transparent 91%, #a8783a66),
+    linear-gradient(180deg, #d4ab62, #ecd29a 15%, #f4e2b3 50%, #e8cb8e 85%, #c99d58);
+}
+
+/* Weathered sandstone for pillars and room walls. */
+@utility bg-sandstone {
+  background-color: #b89a70;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.26 0 0 0 0 0.16 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, #8c7154, #c9ae84 30%, #d8bf95 50%, #c2a67b 70%, #7d6347);
+}
+
+@theme {
+  --font-serif: 'Cormorant Garamond', Georgia, 'Noto Serif Devanagari', 'Noto Serif Telugu', 'Noto Serif Kannada', 'Noto Serif Malayalam', 'Noto Serif Bengali', 'Noto Serif Gujarati', 'Noto Serif Gurmukhi', 'Noto Serif Oriya', 'Noto Nastaliq Urdu', 'Noto Naskh Arabic', 'Noto Sans Ol Chiki', 'Noto Serif Hebrew', 'Noto Sans Thaana', 'Noto Serif SC', 'Noto Serif TC', 'Noto Serif JP', 'Noto Serif KR', 'Noto Serif Thai', 'Noto Serif Lao', 'Noto Serif Khmer', 'Noto Serif Myanmar', 'Noto Serif Sinhala', 'Noto Serif Ethiopic', 'Noto Serif Georgian', 'Noto Serif Armenian', 'Noto Serif Tibetan', serif;
+  --font-sans: Inter, Arial, 'Noto Sans Devanagari', 'Noto Sans Telugu', 'Noto Sans Kannada', 'Noto Sans Malayalam', 'Noto Sans Bengali', 'Noto Sans Gujarati', 'Noto Sans Gurmukhi', 'Noto Sans Oriya', 'Noto Nastaliq Urdu', 'Noto Naskh Arabic', 'Noto Sans Ol Chiki', 'Noto Sans Hebrew', 'Noto Sans Thaana', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans Thai', 'Noto Sans Lao', 'Noto Sans Khmer', 'Noto Sans Myanmar', 'Noto Sans Sinhala', 'Noto Sans Ethiopic', 'Noto Sans Georgian', 'Noto Sans Armenian', 'Noto Serif Tibetan', sans-serif;
+  --color-gold: #d8b56b;
+  --color-gold-bright: #f4d792;
+  --color-gold-soft: #ad8445;
+  --color-parchment: #f7ead0;
+
+  /* Heritage palette: temple gold, rich terracotta, antique sepia, carved teak, sandstone */
+  --color-temple-gold: #d4a64a;
+  --color-temple-gold-light: #f2d38b;
+  --color-terracotta: #b4532a;
+  --color-terracotta-deep: #7d2e14;
+  --color-sepia: #704214;
+  --color-sepia-light: #a47a4a;
+  --color-teak: #4a2410;
+  --color-teak-dark: #2a1408;
+  --color-sandstone: #c9ae84;
+  --color-sandstone-dark: #8c7154;
+  /* The Then & Now and Ancient Tamilakam views: midnight indigo under the antique gold, on ivory. */
+  --color-midnight: #121833;
+  --color-midnight-light: #232c55;
+  --color-ivory: #f8f1e1;
+
+  --animate-ken-burns: ken-burns 26s ease-in-out infinite alternate;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+  --animate-halo: halo 2.8s ease-out infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(.2,.7,.2,1) both;
+  --animate-spin-slow: spin 60s linear infinite;
+  --animate-flip-shade: flip-shade 800ms ease-in-out both;
+
+  /* Spring-like motion for buttons, cards, and pop-ups */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  --animate-pop-in: pop-in 0.55s var(--ease-spring) both;
+  --animate-bounce-soft: bounce-soft 2.4s ease-in-out infinite;
+  --animate-point-nudge: point-nudge 1.6s ease-in-out infinite;
+  --animate-unroll: unroll 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-wave: wave 1s ease-in-out infinite;
+  --animate-wiggle: wiggle 0.5s var(--ease-spring);
+
+  /* The Thirukkural scroll: each kural card unrolls downwards; the stamp presses in last. */
+  --animate-unfold-card: unfold-card 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-seal-press: seal-press 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 1.3s both;
+
+  @keyframes unfold-card {
+    from { clip-path: inset(0 0 100% 0); opacity: 0.3; }
+    to { clip-path: inset(0 0 0 0); opacity: 1; }
+  }
+
+  /* A deepam's flame: an uneven flicker that leans and stretches; its glow breathes slower. */
+  --animate-flame: flame-flicker 0.9s ease-in-out infinite;
+  --animate-deepam-glow: deepam-glow 2.6s ease-in-out infinite alternate;
+
+  @keyframes flame-flicker {
+    0%, 100% { transform: scale(1, 1) skewX(0deg); opacity: 1; }
+    25% { transform: scale(0.92, 1.1) skewX(3deg); opacity: 0.9; }
+    55% { transform: scale(1.06, 0.93) skewX(-2deg); opacity: 1; }
+    80% { transform: scale(0.96, 1.05) skewX(1.5deg); opacity: 0.95; }
+  }
+  @keyframes deepam-glow {
+    from { opacity: 0.65; transform: scale(0.94); }
+    to { opacity: 1; transform: scale(1.06); }
+  }
+
+  /* The Olai Suvadi: turning to another kural lifts the fresh leaves into place. */
+  --animate-leaf-turn: leaf-turn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes leaf-turn {
+    from { opacity: 0; transform: translateY(-12px) rotateX(40deg); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /*
+   * The manuscript bundle viewer, bound at the top like a spiral notepad: turning on, a leaf
+   * lifts from its lower edge towards the visitor and swings up over the binding (rotateX
+   * about its top edge); turning back, the previous leaf swings down over it. The leaf
+   * beneath dims while it is covered, as the turning leaf's shadow passes.
+   *
+   * The turn (leaf-flip-*) and the fade as the leaf passes over the binding (leaf-fade-*) go
+   * on separate elements: opacity on the element turning in 3D would flatten it, and the
+   * leaf's back would never show.
+   */
+  --animate-leaf-flip-up: leaf-flip-up 0.85s cubic-bezier(0.45, 0.05, 0.3, 1) both;
+  --animate-leaf-flip-down: leaf-flip-down 0.85s cubic-bezier(0.45, 0.05, 0.3, 1) both;
+  --animate-leaf-fade-over: leaf-fade-over 0.85s linear both;
+  --animate-leaf-fade-under: leaf-fade-under 0.85s linear both;
+  --animate-leaf-shadow: leaf-shadow 0.85s ease-in-out both;
+
+  @keyframes leaf-flip-up {
+    from { transform: rotateX(0deg); }
+    to { transform: rotateX(180deg); }
+  }
+  @keyframes leaf-flip-down {
+    from { transform: rotateX(180deg); }
+    to { transform: rotateX(0deg); }
+  }
+  @keyframes leaf-fade-over {
+    0%, 72% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes leaf-fade-under {
+    0% { opacity: 0; }
+    28%, 100% { opacity: 1; }
+  }
+  @keyframes leaf-shadow {
+    0%, 100% { opacity: 0; }
+    45% { opacity: 1; }
+  }
+  @keyframes seal-press {
+    0% { opacity: 0; transform: scale(1.7) rotate(-18deg); }
+    70% { opacity: 1; transform: scale(0.94) rotate(4deg); }
+    100% { opacity: 1; transform: scale(1) rotate(-6deg); }
+  }
+
+  /*
+   * Glowing fireflies. floatAndDrift wanders each one through a looping five-point path
+   * across the hall (reach set per firefly by --drift-x / --drift-y, sign included, so
+   * some loop clockwise and some anticlockwise); firefly-flutter adds a quick, small
+   * bob on top so the flight never looks mechanical; firefly-twinkle fades the glow
+   * between 0.2 and 0.85 while it gently breathes in size (glow and all). Durations and delays are set
+   * per firefly (inline style).
+   */
+  --animate-float-and-drift: floatAndDrift 20s ease-in-out infinite;
+  --animate-firefly-flutter: firefly-flutter 4s ease-in-out infinite alternate;
+  --animate-firefly-twinkle: firefly-twinkle 3.5s ease-in-out infinite;
+
+  @keyframes floatAndDrift {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(calc(var(--drift-x, 120px) * 0.6), calc(var(--drift-y, 80px) * -0.9)); }
+    40% { transform: translate(var(--drift-x, 120px), calc(var(--drift-y, 80px) * 0.2)); }
+    60% { transform: translate(calc(var(--drift-x, 120px) * 0.25), var(--drift-y, 80px)); }
+    80% { transform: translate(calc(var(--drift-x, 120px) * -0.7), calc(var(--drift-y, 80px) * 0.35)); }
+  }
+  @keyframes firefly-flutter {
+    from { transform: translate(-6px, 8px); }
+    to { transform: translate(6px, -8px); }
+  }
+  /* Opacity and scale only (the glow is the element's fixed box-shadow, scaled with it): both
+     run on the compositor, where an animated box-shadow would be repainted every frame. */
+  @keyframes firefly-twinkle {
+    0%, 100% {
+      opacity: 0.2;
+      transform: scale(0.75);
+    }
+    45% {
+      opacity: 0.85;
+      transform: scale(1.2);
+    }
+    60% {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes pop-in {
+    0% { opacity: 0; transform: scale(0.86) translateY(14px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes bounce-soft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  /* A pointer drawn towards what it points at, brightening as it nears. */
+  @keyframes point-nudge {
+    0%, 100% { transform: translateX(-6px); opacity: 0.7; }
+    50% { transform: translateX(4px); opacity: 1; }
+  }
+  @keyframes unroll {
+    from { clip-path: inset(48% 0 48% 0); opacity: 0.4; }
+    to { clip-path: inset(0 0 0 0); opacity: 1; }
+  }
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+  }
+  @keyframes wiggle {
+    0%, 100% { rotate: 0deg; }
+    30% { rotate: -6deg; }
+    60% { rotate: 4deg; }
+  }
+
+  @keyframes flip-shade {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes ken-burns {
+    from { transform: scale(1.04) translate3d(0, 0, 0); }
+    to { transform: scale(1.16) translate3d(-1.5%, -1%, 0); }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+  @keyframes halo {
+    0% { transform: scale(0.92); opacity: 0.75; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}

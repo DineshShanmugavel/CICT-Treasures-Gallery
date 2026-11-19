@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The museum's page background (#0c0906, as backgroundColor in capacitor.config.ts). -->
+    <color name="museumBackground">#FF0C0906</color>
+</resources>

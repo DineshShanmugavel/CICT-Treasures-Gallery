@@ -1,0 +1,111 @@
+{
+  "generated": "2026-11-16T08:35:05.447Z",
+  "output": "D:\\cict-tamil-museum 3\\public\\room-pdfs",
+  "files": [
+    {
+      "file": "central-hall-catalogue.pdf",
+      "sections": 3,
+      "entries": 17,
+      "pages": 18,
+      "kb": 1320,
+      "fonts": {
+        "tamil": true,
+        "devanagari": true,
+        "latin": true
+      },
+      "hindiCoverage": "104/104"
+    },
+    {
+      "file": "literature-hall-catalogue.pdf",
+      "sections": 9,
+      "entries": 152,
+      "pages": 73,
+      "kb": 2611,
+      "fonts": {
+        "tamil": true,
+        "devanagari": true,
+        "latin": true
+      },
+      "hindiCoverage": "377/377"
+    },
+    {
+      "file": "thiruvalluvar-shrine-catalogue.pdf",
+      "sections": 5,
+      "entries": 145,
+      "pages": 291,
+      "kb": 5575,
+      "fonts": {
+        "tamil": true,
+        "devanagari": true,
+        "latin": true
+      },
+      "hindiCoverage": "1521/1521"
+    },
+    {
+      "file": "artistic-values-wing-catalogue.pdf",
+      "sections": 8,
+      "entries": 130,
+      "pages": 94,
+      "kb": 2931,
+      "fonts": {
+        "tamil": true,
+        "devanagari": true,
+        "latin": true
+      },
+      "hindiCoverage": "402/402"
+    },
+    {
+      "file": "trade-and-ports-catalogue.pdf",
+      "sections": 4,
+      "entries": 47,
+      "pages": 38,
+      "kb": 1808,
+      "fonts": {
+        "tamil": true,
+        "devanagari": true,
+        "latin": true
+      },
+      "hindiCoverage": "161/161"
+    },
+    {
+      "file": "household-and-agriculture-catalogue.pdf",
+      "sections": 4,
+      "entries": 62,
+      "pages": 46,
+      "kb": 1953,
+      "fonts": {
+        "tamil": true,
+        "devanagari": true,
+        "latin": true
+      },
+      "hindiCoverage": "194/194"
+    },
+    {
+      "file": "ainthinai-and-tamilakam-catalogue.pdf",
+      "sections": 14,
+      "entries": 116,
+      "pages": 89,
+      "kb": 2904,
+      "fonts": {
+        "tamil": true,
+        "devanagari": true,
+        "latin": true
+      },
+      "hindiCoverage": "506/506"
+    },
+    {
+      "file": "cict-museum-master-catalogue.pdf",
+      "sections": 47,
+      "entries": 669,
+      "pages": 641,
+      "kb": 12244,
+      "fonts": {
+        "tamil": true,
+        "devanagari": true,
+        "latin": true
+      },
+      "hindiCoverage": "3251/3251"
+    }
+  ],
+  "hindiMissingSamples": []
+}

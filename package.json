@@ -1,0 +1,51 @@
+{
+  "name": "cict-tamil-treasures-gallery",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "build:kural": "node scripts/build-thirukkural.mjs",
+    "build:room-pdfs": "node scripts/generateRoomMasterPdfs.mjs",
+    "build:mobile": "vite build --mode mobile",
+    "cap:sync": "npm run build:mobile && cap sync",
+    "cap:android": "npm run cap:sync && cap open android",
+    "cap:ios": "npm run cap:sync && cap open ios",
+    "build:voiceovers": "node scripts/generateVoiceovers.mjs",
+    "build:kural-audio": "node scripts/generateAllKuralsAudio.mjs",
+    "build:tamil-narration": "node scripts/generateTamilNarration.mjs",
+    "build:kural-meaning-audio": "node scripts/generateKuralMeaningAudio.mjs",
+    "build:kural-meaning-audio-hi": "node scripts/generateKuralMeaningAudio.mjs --lang hi",
+    "build:story-hindi-audio": "node scripts/generateStoryHindiAudio.mjs",
+    "build:english-narration": "node scripts/generateEnglishNarration.mjs",
+    "build:hindi-narration": "node scripts/generateHindiNarration.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/noto-sans-devanagari": "^5.3.0",
+    "@fontsource/noto-serif-devanagari": "^5.3.0",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.3.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "latest",
+    "pdfjs-dist": "^5.4.296",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwindcss": "^4.3.3",
+    "three": "latest",
+    "vite": "^8.3.8"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
+    "sharp": "^0.34.5",
+    "typescript": "^5.9.3"
+  }
+}

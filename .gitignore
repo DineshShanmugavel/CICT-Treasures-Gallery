@@ -1,0 +1,55 @@
+# ---- Secrets ---------------------------------------------------------------------------
+# .env.local holds the ElevenLabs API key (audio generator scripts); .env.mobile the app's
+# media address. Never commit any .env file. .env.example is a template with no secrets.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.jks
+*.keystore
+*.p12
+
+# ---- Dependencies and builds -----------------------------------------------------------
+node_modules/
+dist/
+dist-mobile/
+build-output/
+*.tsbuildinfo
+.vite/
+.cache/
+
+# Build report written by build/museumMedia.mjs
+media-report.json
+
+# Visitor analytics data (if the Node server is run from the project root; NOT src/data)
+/data/
+
+# ---- Logs ------------------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# Audio / narration generator logs
+*-log.json
+
+# ---- Local working files ---------------------------------------------------------------
+# Older recordings kept aside while regenerating audio
+superseded-*/
+# Test screenshots
+/after-hi.png
+/dbg.png
+/hdr-*.png
+*.part
+*.tmp
+
+# ---- Editors and OS --------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.qodo/
+*.swp
