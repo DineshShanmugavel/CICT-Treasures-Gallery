@@ -10,8 +10,8 @@ import { generatedNarration } from '../narration/generated.js';
  *   defaults (src/data)  ←  published edits (site-data.json beside index.html)  ←  draft
  *
  * - Published edits: `site-data.json` in the site's folder, which every visitor loads. It ships
- *   empty (public/site-data.json); the admin's "Export Site Data" file replaces it, or "Publish"
- *   writes it when the museum's Node server runs (public/serve-museum.mjs).
+ *   empty (deploy/site-data.json); the admin's "Export Site Data" file replaces it, or "Publish"
+ *   writes it when the museum's Node server runs (deploy/serve-museum.mjs).
  * - Draft: the admin's own edits, kept in this browser's localStorage, so a change shows at once
  *   (also in other tabs of the museum) before it is exported or published.
  *

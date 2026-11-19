@@ -163,25 +163,37 @@ function museumManifests() {
 }
 
 /**
- * The visitor analytics and admin API (public/museum-analytics.mjs, the same module the office
+ * The visitor analytics and admin API (deploy/museum-analytics.mjs, the same module the office
  * server uses) inside `npm run dev` and `npm run preview`, so live users, views, cities and
- * "Publish" work there too. In development, Publish writes public/site-data.json itself, so the
- * published edits go into the next build. Counts: node_modules/.cache/museum-analytics.
+ * "Publish" work there too. In development, Publish writes deploy/site-data.json (tracked with
+ * the code), so the published edits go into the next build and the repository.
+ * Counts: node_modules/.cache/museum-analytics.
  */
 function museumApi() {
   const here = fileURLToPath(new URL('.', import.meta.url));
   const dataDir = resolve(here, 'node_modules/.cache/museum-analytics');
   const mount = async (server, siteRoot) => {
     // (A fresh URL each time, so a dev-server restart picks up changes to the module.)
-    const { createMuseumApi } = await import(`${pathToFileURL(resolve(here, PUBLIC_DIR, 'museum-analytics.mjs')).href}?v=${Date.now()}`);
+    const { createMuseumApi } = await import(`${pathToFileURL(resolve(here, 'deploy', 'museum-analytics.mjs')).href}?v=${Date.now()}`);
     const api = createMuseumApi({ siteRoot, dataDir, log: { warn: () => {} } });
     server.middlewares.use((req, res, next) => {
       api(req, res).then((handled) => handled || next(), next);
     });
   };
+  // In development the published edits live in deploy/site-data.json (tracked with the code).
+  const serveSiteData = (server) =>
+    server.middlewares.use((req, res, next) => {
+      if ((req.url ?? '').split('?')[0] !== '/site-data.json') return next();
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.end(readFileSync(resolve(here, 'deploy', 'site-data.json')));
+    });
   return {
     name: 'museum-api',
-    configureServer: (server) => mount(server, resolve(here, PUBLIC_DIR)),
+    configureServer: async (server) => {
+      serveSiteData(server);
+      await mount(server, resolve(here, 'deploy'));
+    },
     configurePreviewServer: (server) => mount(server, resolve(here, 'dist')),
   };
 }
@@ -190,7 +202,7 @@ function museumApi() {
  * Pre-compressed copies of the built code and data (x.js → x.js.br, x.js.gz) beside the
  * originals, so a server sends the small copy straight off the disk instead of compressing
  * on every request (nginx gzip_static / brotli_static, the Apache and IIS rules in
- * public/.htaccess and public/web.config). The media are already compressed (mp3, jpeg, webp,
+ * deploy/.htaccess and deploy/web.config). The media are already compressed (mp3, jpeg, webp,
  * meshopt .glb) and are left alone.
  */
 function precompress() {
@@ -277,6 +289,7 @@ export default defineConfig(({ mode, command }) => {
           srcDir: fileURLToPath(new URL('./src', import.meta.url)),
           cacheDir: fileURLToPath(new URL('./node_modules/.cache/museum-media', import.meta.url)),
           reportFile: fileURLToPath(new URL('./media-report.json', import.meta.url)),
+          deployDir: fileURLToPath(new URL('./deploy', import.meta.url)),
         }),
     ],
     // The dev server serves the media folder as it is; the build copies it through museumMedia.

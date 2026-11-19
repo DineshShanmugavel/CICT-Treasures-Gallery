@@ -83,7 +83,24 @@ async function pool(items, limit, work) {
   }));
 }
 
-export default function museumMedia({ publicDir, srcDir, cacheDir, reportFile }) {
+/** Copies a folder's files (dotfiles included) into the build, replacing any of the same name. */
+async function copyTree(from, to) {
+  if (!from || !existsSync(from)) return 0;
+  let count = 0;
+  for (const entry of await readdir(from, { withFileTypes: true })) {
+    const source = join(from, entry.name);
+    const target = join(to, entry.name);
+    if (entry.isDirectory()) count += await copyTree(source, target);
+    else {
+      await mkdir(dirname(target), { recursive: true });
+      await copyFile(source, target);
+      count++;
+    }
+  }
+  return count;
+}
+
+export default function museumMedia({ publicDir, srcDir, cacheDir, reportFile, deployDir }) {
   let outDir = '';
   return {
     name: 'museum-media',
@@ -151,6 +168,9 @@ export default function museumMedia({ publicDir, srcDir, cacheDir, reportFile })
         leftOut: mb(report.skippedBytes),
         leftOutByReason: Object.fromEntries(Object.entries(report.skipped).map(([reason, list]) => [reason, { count: list.length, files: list.sort() }])),
       };
+      // The server files kept with the code (deploy/): configs, launchers, analytics server,
+      // site-data.json — copied last, so they are always the project's versions.
+      summary.deployFiles = await copyTree(deployDir, outDir);
       await writeFile(reportFile, JSON.stringify(summary, null, 1));
       console.log(`\n[museum-media] ${report.shipped} media files → ${mb(report.shippedBytes)} (photos: ${report.optimised} lighter, −${mb(report.savedBytes)}; left out ${mb(report.skippedBytes)}) in ${summary.seconds}s — see media-report.json`);
     },

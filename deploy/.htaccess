@@ -1,0 +1,107 @@
+# CICT Tamil Treasures Gallery — Apache / cPanel settings.
+# Works at a domain's root or in a sub-folder (the site uses relative paths throughout).
+# Needs mod_rewrite, mod_headers, mod_mime (enabled on almost every host); each block is
+# skipped quietly if its module is missing.
+
+Options -Indexes
+AddDefaultCharset utf-8
+
+# ---- File types the museum serves -------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType application/javascript         .js .mjs
+  AddType application/json               .json
+  AddType text/css                       .css
+  AddType model/gltf-binary              .glb
+  AddType model/gltf+json                .gltf
+  AddType audio/mpeg                     .mp3
+  AddType video/mp4                      .mp4
+  AddType application/pdf                .pdf
+  AddType application/wasm               .wasm
+  AddType image/webp                     .webp
+  AddType image/avif                     .avif
+  AddType image/svg+xml                  .svg
+  # Pre-compressed copies made by the build (x.js.br / x.js.gz): same type, compressed body.
+  AddEncoding br                         .br
+  AddEncoding gzip                       .gz
+</IfModule>
+
+# ---- Send the build's pre-compressed copies (no compressing on every request) -------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  RewriteCond %{HTTP:Accept-Encoding} \bbr\b
+  RewriteCond %{REQUEST_FILENAME}.br -f
+  RewriteRule ^(.+\.(?:js|mjs|css|json|html|svg|wasm))$ $1.br [L]
+
+  RewriteCond %{HTTP:Accept-Encoding} \bgzip\b
+  RewriteCond %{REQUEST_FILENAME}.gz -f
+  RewriteRule ^(.+\.(?:js|mjs|css|json|html|svg|wasm))$ $1.gz [L]
+
+  # Keep the right Content-Type on the compressed copies.
+  RewriteRule \.js\.(br|gz)$   - [T=application/javascript,E=no-gzip:1,E=no-brotli:1]
+  RewriteRule \.mjs\.(br|gz)$  - [T=application/javascript,E=no-gzip:1,E=no-brotli:1]
+  RewriteRule \.css\.(br|gz)$  - [T=text/css,E=no-gzip:1,E=no-brotli:1]
+  RewriteRule \.json\.(br|gz)$ - [T=application/json,E=no-gzip:1,E=no-brotli:1]
+  RewriteRule \.html\.(br|gz)$ - [T=text/html,E=no-gzip:1,E=no-brotli:1]
+  RewriteRule \.svg\.(br|gz)$  - [T=image/svg+xml,E=no-gzip:1,E=no-brotli:1]
+  RewriteRule \.wasm\.(br|gz)$ - [T=application/wasm,E=no-gzip:1,E=no-brotli:1]
+
+  # Visitor analytics + admin API (optional): with `node serve-museum.mjs 8080` running in this
+  # folder and mod_proxy enabled, uncomment to pass the API to it. Leave it commented otherwise:
+  # the museum works fully and its analytics stay off.
+  # RewriteRule ^api/(.*)$ http://127.0.0.1:8080/api/$1 [P,L]
+
+  # The analytics data folder (if the Node server runs from this folder) is never served.
+  RewriteRule (^|/)data(/|$) - [F,L]
+
+  # Single-page app: any address that is not a real file or folder opens the museum.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(br|gz)$">
+    Header append Vary Accept-Encoding
+  </FilesMatch>
+</IfModule>
+
+# ---- Compress on the fly whatever has no pre-compressed copy -----------------------------
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript application/json image/svg+xml model/gltf+json
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml model/gltf+json
+</IfModule>
+
+# ---- Caching -------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # The page itself: always check for a new version (it names the current code files).
+  <FilesMatch "^index\.html(\.(br|gz))?$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  # The admin portal's published edits and the analytics switch: always fresh; the app reads them too.
+  <FilesMatch "^(site-data|status)\.json(\.(br|gz))?$">
+    Header set Cache-Control "no-cache"
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+  # Code and styles under assets/ carry a content hash in their names: keep for a year.
+  <If "%{REQUEST_URI} =~ m#/assets/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  # Photographs, recordings, films, models, PDFs: keep for 30 days.
+  <FilesMatch "\.(jpe?g|png|webp|avif|gif|svg|mp3|mp4|glb|gltf|pdf|woff2?)$">
+    Header set Cache-Control "public, max-age=2592000"
+    # The museum's mobile app reads these media from the website (fetch / WebGL).
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# The local launcher scripts are for office PCs, not for the web.
+<FilesMatch "^(start-local-server\.(bat|sh)|serve-museum\.mjs|museum-analytics\.mjs|nginx\.conf\.example|web\.config)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>

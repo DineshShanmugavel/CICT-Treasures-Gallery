@@ -30,10 +30,16 @@ npm install
 npm run build
 ```
 
-The build copies the media from the workspace's `public/` folder, keeping only the files the site
-uses, and re-encodes oversized photos (the originals in `public/` are never changed). It also
-writes pre-compressed `.br` / `.gz` copies of the code. `media-report.json` lists what it
-left out and why. The first build takes several minutes; later builds reuse the optimised photos.
+The build copies the media from the workspace's `public/` folder (`D:\cict-tamil-museum 3\public`,
+beside the project folder), keeping only the files the site uses. It re-encodes oversized photos;
+the originals in `public/` are never changed. It then adds the project's `deploy/` folder: the
+server configs, launchers, analytics server and `site-data.json`. It also writes pre-compressed
+`.br` / `.gz` copies of the code. `media-report.json` lists what it left out and why. The first
+build takes several minutes; later builds reuse the optimised photos.
+
+**The media is not in the Git repository.** At about 34 GB, with files of up to 19.6 GB, it is too
+large for GitHub. A fresh clone needs the workspace's `public/` folder placed beside the project
+folder, copied from the office backup, before `npm run dev` or `npm run build` show the exhibits.
 
 To check the built site before copying it, run `npm run preview` and open http://localhost:4173/.
 
@@ -100,8 +106,9 @@ museum's admin password. The portal is 2D and loads none of the 3D museum.
     click **Publish to server**.
   - On a static host (cPanel, IIS or nginx without Node), click **Export Site Data (JSON)** and
     upload the downloaded `site-data.json` into the museum folder, replacing the old one.
-  - To keep the edits in future builds too, copy that file to the workspace's
-    `public/site-data.json` before running `npm run build`.
+  - To keep the edits in future builds (and in the Git repository) too, copy that file to the
+    project's `deploy/site-data.json` before running `npm run build`. Publishing from
+    `npm run dev` writes that file directly.
 - **Import Site Data (JSON)** loads an exported file. **Reset to Default** clears all edits.
   After either, publish or export the result to apply it to the site.
 

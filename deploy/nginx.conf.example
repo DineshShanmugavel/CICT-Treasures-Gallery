@@ -1,0 +1,93 @@
+# CICT Tamil Treasures Gallery: example nginx server block.
+# Copy the contents of dist/ to /var/www/tamil-museum (or change `root`), put this block in
+# /etc/nginx/sites-available/tamil-museum, link it into sites-enabled, then
+#   sudo nginx -t && sudo systemctl reload nginx
+#
+# For a sub-folder of an existing site instead (http://server/tamil-museum/), use the
+# "location /tamil-museum/" block at the bottom inside that site's server block.
+
+server {
+    listen 80;
+    # listen 443 ssl http2;                       # with HTTPS (recommended on the public site)
+    # ssl_certificate     /etc/letsencrypt/live/example.org/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/example.org/privkey.pem;
+    server_name _;                                # or: museum.example.org
+
+    root  /var/www/tamil-museum;
+    index index.html;
+    charset utf-8;
+
+    # File types nginx's default mime.types may lack.
+    types {
+        model/gltf-binary       glb;
+        model/gltf+json         gltf;
+        application/javascript  mjs;
+        application/wasm        wasm;
+        image/avif              avif;
+    }
+
+    # The build ships x.js.gz beside x.js: sent as-is, no compressing per request.
+    gzip_static on;
+    # brotli_static on;                           # if the ngx_brotli module is installed
+    gzip on;
+    gzip_types text/css application/javascript application/json image/svg+xml model/gltf+json;
+    gzip_min_length 1024;
+
+    sendfile on;
+    tcp_nopush on;
+
+    # Hashed code and styles: never change, keep a year.
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        add_header X-Content-Type-Options nosniff;
+        try_files $uri =404;
+    }
+
+    # Photographs, recordings, films, models, PDFs: keep 30 days (range requests work for seeking).
+    location ~* \.(?:jpe?g|png|webp|avif|gif|svg|mp3|mp4|glb|gltf|pdf|woff2?)$ {
+        add_header Cache-Control "public, max-age=2592000";
+        add_header X-Content-Type-Options nosniff;
+        add_header Access-Control-Allow-Origin "*";   # the mobile app reads media from the site
+        try_files $uri =404;
+    }
+
+    # Office launcher scripts and the analytics data are not for the web.
+    location ~ ^/(start-local-server\.(bat|sh)|serve-museum\.mjs|museum-analytics\.mjs|nginx\.conf\.example|web\.config|\.htaccess)$ {
+        return 404;
+    }
+    location ^~ /data/ {
+        return 404;
+    }
+
+    # Visitor analytics + admin API: run `node serve-museum.mjs 8080` in the museum folder
+    # (systemd / pm2) and keep this block. Without the Node server, delete this block: the site
+    # stays fully working and the analytics simply stay off (the shipped
+    # api/analytics/status.json says so).
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        client_max_body_size 6m;
+    }
+
+    # The admin portal's published edits: always fresh.
+    location = /site-data.json {
+        add_header Cache-Control "no-cache";
+        add_header Access-Control-Allow-Origin "*";
+    }
+
+    # The page: always revalidate. Any other address opens the museum (single-page app).
+    location / {
+        add_header Cache-Control "no-cache";
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+# --- Sub-folder variant: inside an existing server block -----------------------------------
+# location /tamil-museum/ {
+#     alias /var/www/tamil-museum/;
+#     gzip_static on;
+#     try_files $uri $uri/ /tamil-museum/index.html;
+#     location ~* /tamil-museum/assets/ { add_header Cache-Control "public, max-age=31536000, immutable"; }
+# }

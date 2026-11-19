@@ -3,7 +3,7 @@ import { IS_WEB } from '../platform.js';
 
 /*
  * Visitor analytics, website only (never in the Capacitor app: IS_WEB, and the app build drops
- * this module's work entirely). The museum's Node server (public/museum-analytics.mjs) counts:
+ * this module's work entirely). The museum's Node server (deploy/museum-analytics.mjs) counts:
  *
  *   - a visit when the museum opens (unique views are counted by IP on the server),
  *   - a heartbeat every 30 s while the tab is in view (live users).
